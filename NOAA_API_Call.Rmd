@@ -1,0 +1,79 @@
+---
+title: "NOAA_API_Pull"
+author: "Jake Juliano"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(reticulate)
+# use_python("C:/Users/Jake Juliano/Downloads/python-3.11.5-amd64.exe")
+```
+
+```{python}
+import pandas as ps
+import numpy as np
+import requests
+```
+
+```{python}
+access_token = "bMXGNqbiRqaTVAFNEVkEfXhqRltsuNtI"
+
+url_stations = "https://www.ncei.noaa.gov/cdo-web/api/v2/stations"
+url_datasets = "https://www.ncei.noaa.gov/cdo-web/api/v2/datasets"
+
+headers = {
+  "token": access_token
+}
+
+params = {
+  'locationid': 'FIPS:37',
+  'datatypeid': 'MLLW'
+}
+
+response = requests.get(url_stations, headers = headers, params = params)
+# springmaid_response = requests.get(url_stations + "/8661070", headers = headers, params = params)
+print(response.status_code)
+# print(springmaid_response.status_code)
+
+response_data = response.json()
+response_data_results = response_data["results"]
+response_data_results[0]
+
+data_dictionary = dict()
+for station in response_data_results:
+  station_name = station.get("name")
+  data_dictionary[station_name] = station
+
+response_datasets = requests.get(url_datasets, headers = headers, params = params)
+response_data_datasets = response_datasets.json()
+response_data_results_datasets = response_data_datasets["results"]
+data_dictionary_datasets = dict()
+for dataset in response_data_results_datasets:
+  dataset_name = dataset.get("name")
+  data_dictionary_datasets[dataset_name] = dataset
+  
+#   
+# # Define the station ID and URL
+# station_id = "8661070"
+# url_datums = f"https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?station={station_id}&product=datums&datum=MLLW&format=json"
+# 
+# # Make the request
+# response_trial = requests.get(url_datums)
+# datums_data = response_trial.json()
+# 
+# 
+# response_datasets_trial = requests.get(url_datasets, headers = headers, params = params)
+# response_data_datasets_trial = response_datasets_trial.json()
+# response_data_results_datasets_trial = response_data_datasets_trial["results"]
+
+```
+
+
+
+
+
+
+
+
